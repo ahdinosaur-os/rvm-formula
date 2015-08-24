@@ -22,6 +22,17 @@ rvm_{{ name }}_install:
     - shell: "/bin/bash"
     - require:
       - pkg: rvm_deps
+
+rvm_{{ name }}_configure:
+  cmd.run:
+    - name: |
+        {%- for version in installs %}
+        rvm install {{ version }};
+        {%- endfor %}
+        rvm alias default {{ default }};
+    - shell: "/bin/bash"
+    - require:
+      - cmd: rvm_{{ name }}_install
   file.directory:
     - name: {{ home }}/.rvm
     - user: {{ name }}
@@ -30,22 +41,9 @@ rvm_{{ name }}_install:
       - user
       - group
     - require:
-      - cmd: rvm_{{ name }}_install
-      - cmd: rvm_{{ name }}_configure
       - group: users_{{ name }}_user
       - user: users_{{ name }}_user
-
-rvm_{{ name }}_configure:
-  git.latest:
-    - name: git://github.com/rvm/rvm
-    - target: {{ home }}/.rvm
-  cmd.run:
-    - name: |
-        {%- for version in installs %}
-        rvm install {{ version }};
-        {%- endfor %}
-        rvm alias default {{ default }};
-    - shell: "/bin/bash"
+      - cmd: rvm_{{ name }}_configure
 
 {% endfor %}
 
