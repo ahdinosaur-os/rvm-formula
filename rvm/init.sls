@@ -49,7 +49,7 @@ rvm_{{ name }}_configure:
 
 rvm_deps:
   pkg.installed:
-    - pkgs:
+    - names:
       - build-essential
       - libssl-dev
       - curl
